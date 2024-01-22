@@ -1,5 +1,40 @@
 let userForm = document.querySelector("#userForm");
 let userList = document.querySelector("#userList");
+let userName = document.querySelector("#userName");
+let userEmail = document.querySelector("#userEmail");
+let userPassword = document.querySelector("#userPassword");
+let saveUserBtn = document.querySelector("#saveUserBtn");
+
+saveUserBtn.addEventListener("click", () => {
+    
+    console.log("klick klick");
+
+    let sendUser = {
+        name: userName.value,
+        email: userEmail.value,
+        password: userPassword.value
+    }
+
+    console.log("send", sendUser);
+
+    fetch("http://localhost:3002/users", {
+        method: "POST", 
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(sendUser)
+    })
+    .then(res => res.json())
+    .then(data => {
+        localStorage.setItem("user", data.id);
+        userEmail.value = ""; 
+        userName.value = "";
+        userPassword.value = ""; 
+
+        printUsers();
+        printLogoutBtn(); 
+    })
+})
 
 if (localStorage.getItem("user")) {
     printLogoutBtn();
@@ -8,6 +43,7 @@ if (localStorage.getItem("user")) {
 }
 
 function printUsers() {
+    userList.innerHTML = "";
     fetch("http://localhost:3002/users")
     .then(res => res.json())
     .then(data => {
